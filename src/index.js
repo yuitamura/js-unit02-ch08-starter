@@ -43,26 +43,25 @@ const addErrorMessage = (type, message) => {
   input.insertAdjacentHTML('afterend', `<div class="invalid-feedback">${message}</div>`);
 }
 
-const signup = (params) => {
+const signup = async(params) => {
   try {
-    return fetch(`${endpoint}/signup`, { // returnあとで考える
-      method: 'POST',
-      headers: {
-        Accept: 'application/json; charset=utf-8',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(params)
-    })
-    .then((res) => {
-      const json = res.json();
-      if (res.status === 200) { // 登録成功
-        return json
-      } else { // 登録失敗
-        return Promise.reject(new Error('ユーザー登録失敗'))
-      }
-    })
+    const res =
+      await fetch(`${endpoint}/signup`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json; charset=utf-8',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params)
+      })
+    const json = res.json();
+    if (res.status === 200) { // 登録成功
+      return json
+    } else { // 登録失敗
+      return Promise.reject(new Error('ユーザー登録失敗'))
+    }
   } catch (err) {
-    if (name === 'TypeError') {
+    if (err.name === 'TypeError') {
       return Promise.resolve(new Error("データを取得出来ませんでした。")); // Errorオブジェクト
     } else {
       return Promise.reject((err)); // new Errorは不要、Promiseはオブジェクトを返すから
